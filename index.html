@@ -2,209 +2,671 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>建筑规范查询</title>
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  background:#fff;color:#1f2328;
-  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-  -webkit-font-smoothing:antialiased;
+:root {
+  --bg-color: #f4f5f7;
+  --card-bg: #ffffff;
+  --text-main: #1f2328;
+  --text-sub: #8b949e;
+  --blue-primary: #1e4bd2;
+  --blue-light: #eff4ff;
+  --green: #15803d;
+  --green-bg: #dcfce7;
+  --red: #b91c1c;
+  --red-bg: #fee2e2;
+  --orange: #c2410c;
+  --orange-bg: #ffedd5;
+  --border-color: #e5e7eb;
 }
-.wrap{max-width:720px;margin:0 auto;padding:0 16px 32px}
-h1{font-size:20px;font-weight:600;margin:28px 0 18px;letter-spacing:.2px}
-#q{
-  width:100%;height:44px;padding:0 14px;
-  font-size:15px;font-family:inherit;color:inherit;
-  border:1px solid #d0d7de;border-radius:8px;background:#fff;outline:none;
-  transition:border-color .15s;
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
-#q:focus{border-color:#0969da}
-#q::placeholder{color:#8b949e}
-.cats{display:flex;gap:8px;margin:14px 0 2px;overflow-x:auto;scrollbar-width:none}
-.cats::-webkit-scrollbar{display:none}
-.chip{
-  flex:0 0 auto;padding:6px 14px;font-size:14px;font-family:inherit;
-  color:#57606a;background:#fff;border:1px solid #d0d7de;border-radius:999px;
-  cursor:pointer;white-space:nowrap;transition:.15s;
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.5;
 }
-.chip:hover{border-color:#afb8c1}
-.chip.on{color:#fff;background:#0969da;border-color:#0969da}
-.item{border:1px solid #e5e9ef;border-radius:10px;padding:14px 16px;margin-top:12px}
-.head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.code{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  font-size:13px;color:#57606a;background:#f6f8fa;border-radius:4px;padding:2px 7px;
+
+/* 视图控制 */
+.hidden {
+  display: none !important;
 }
-.tag{font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
-.tag.green{color:#1a7f37;background:#dafbe1}
-.tag.red{color:#cf222e;background:#ffebe9}
-.tag.orange{color:#9a6700;background:#fff8c5}
-.name{font-size:16px;font-weight:600;line-height:1.5;margin:10px 0 12px}
-.btn{
-  padding:5px 12px;font-size:13px;font-family:inherit;color:#57606a;
-  background:#fff;border:1px solid #d0d7de;border-radius:6px;cursor:pointer;transition:.15s;
+
+/* ================= 列表页样式 ================= */
+.hero {
+  background: var(--blue-primary);
+  padding: 24px 16px 30px;
+  text-align: center;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
 }
-.btn:hover{background:#f6f8fa}
-.detail{margin-top:14px;padding-top:12px;border-top:1px dashed #e5e9ef}
-.detail h3{font-size:13px;font-weight:600;color:#8b949e;margin:0 0 6px}
-.detail p{margin:0 0 14px;font-size:14px;line-height:1.75}
-.detail ul{margin:0;padding-left:18px}
-.detail li{font-size:14px;line-height:1.75;margin-bottom:4px}
-.empty{padding:48px 0;text-align:center;color:#8b949e;font-size:14px}
-.foot{margin-top:28px;text-align:center;font-size:12px;color:#8b949e}
+
+.hero h1 {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  letter-spacing: 1px;
+}
+
+.hero p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  margin: 0 0 20px;
+}
+
+.search-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-wrapper svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+}
+
+#search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px 0 44px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text-main);
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+#search-input::placeholder {
+  color: #9ca3af;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+.categories {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 16px 0 12px;
+  margin: 0 -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  scrollbar-width: none;
+}
+
+.categories::-webkit-scrollbar {
+  display: none;
+}
+
+.category-btn {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: #fff;
+  color: var(--text-sub);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.category-btn.active {
+  background: var(--blue-primary);
+  color: #fff;
+  border-color: var(--blue-primary);
+  font-weight: 500;
+}
+
+.list-header {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-bottom: 12px;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.card:active {
+  transform: scale(0.995);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue-primary);
+  background: var(--blue-light);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.card-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.card-status.green { color: var(--green); background: var(--green-bg); }
+.card-status.red { color: var(--red); background: var(--red-bg); }
+.card-status.orange { color: var(--orange); background: var(--orange-bg); }
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0 0 8px;
+}
+
+.card-meta {
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-sub);
+  font-size: 14px;
+}
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  padding: 20px 0 30px;
+}
+
+
+/* ================= 详情页样式 ================= */
+#detail-view {
+  background: #fff;
+  min-height: 100vh;
+}
+
+.detail-nav {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+#back-btn {
+  background: none;
+  border: none;
+  color: var(--blue-primary);
+  font-size: 15px;
+  font-family: inherit;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+.detail-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0 0 8px;
+  color: #1f2328;
+}
+
+.detail-subtitle {
+  font-size: 15px;
+  color: var(--blue-primary);
+  margin-bottom: 28px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* 核心摘要区 */
+.summary-section {
+  margin-bottom: 32px;
+}
+
+.summary-title {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2328;
+  margin-bottom: 12px;
+}
+
+.summary-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background-color: var(--blue-primary);
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+.summary-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #374151;
+  text-align: justify;
+}
+
+.summary-text .highlight {
+  color: var(--blue-primary);
+  font-weight: 700;
+}
+
+/* 三列信息网格 */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--border-color);
+  margin-bottom: 32px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-label {
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.info-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2328;
+}
+
+/* 链接框区域 */
+.link-box {
+  border: 1px dashed #d0d7de;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafbfc;
+}
+
+.link-title {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-bottom: 10px;
+}
+
+.link-url {
+  display: block;
+  font-size: 14px;
+  color: var(--blue-primary);
+  text-decoration: none;
+  word-break: break-all;
+  margin-bottom: 16px;
+}
+
+.link-url:hover {
+  text-decoration: underline;
+}
+
+.copy-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--blue-primary);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--blue-primary);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.copy-btn:hover {
+  background: rgba(30, 75, 210, 0.05);
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .detail-title {
+    font-size: 20px;
+  }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>建筑规范查询</h1>
-  <input id="q" type="text" placeholder="搜索规范名称或编号" autocomplete="off">
-  <div class="cats" id="cats"></div>
-  <main id="list"></main>
-  <div class="foot">数据核对日期：2026年10月</div>
+
+<div id="app">
+  <!-- 列表视图 -->
+  <div id="home-view">
+    <header class="hero">
+      <h1>建筑规范查询</h1>
+      <p>按规范名称或编号模糊搜索 · 本地离线可用</p>
+      <div class="search-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="输入名称或编号，如「用电」「JGJ」" autocomplete="off">
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="categories" id="category-container"></div>
+      <div class="list-header" id="list-count">共 0 条规范</div>
+      <div id="list-container"></div>
+    </div>
+    
+    <div class="footer">数据核对日期：2026年10月</div>
+  </div>
+
+  <!-- 详情视图 -->
+  <div id="detail-view" class="hidden">
+    <div class="detail-nav">
+      <button id="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        返回列表
+      </button>
+    </div>
+    <div class="detail-wrap" id="detail-content">
+      <!-- 动态渲染内容 -->
+    </div>
+  </div>
 </div>
+
 <script>
-var DATA = [
+// 原始数据
+const DATA = [
   {
     id: 1,
-    cat: '施工验收',
+    cat: '安全管理',
     code: 'JGJ/T46-2024',
     name: '建筑与市政工程施工现场临时用电安全技术标准',
     status: '现行有效',
-    scene: '适用于新建、改建、扩建的工业与民用建筑和市政基础设施施工现场临时用电工程。',
+    version: '2024年版',
+    impl: '2025-01-01',
+    replace: '替代 JGJ/T46-2005',
+    url: 'https://www.mohurd.gov.cn/',
     points: [
-      '6.2.5 电缆直接埋地敷设的深度不应小于 0.7m，且应在电缆周围均匀铺垫不小于 50mm 厚的细砂。',
-      '6.2.7 埋地电缆与其附近外电电缆和管沟的平行间距不应小于 2m。',
-      '6.3.3 室内明敷设主干线距地面不应小于 2.5m。',
-      '7.1.4 电动建筑机械和手持电动工具的电缆线路应符合相应规定。',
-      '7.2.6 塔身高于 30m 的塔式起重机，应在塔顶和臂架端部设红色信号灯。',
-      '7.4.5 多台夯土机械并列工作时，间距不应小于 5m。',
-      '7.5.4 电焊机械的二次线应采用防水橡皮护套铜芯软电缆，电缆长度不应大于 30m，不得采用金属构件或主体结构钢筋代替二次线的中性导体。',
-      '7.6.5 手持电动工具应满足规定的绝缘电阻限值要求。',
-      '8.1.2 在施工程（含脚手架）的周边与架空线路的边线之间应满足最小安全操作距离。',
-      '9.2.2 灯具离地面高度小于 2.5m 场所的照明，电源电压不应大于 AC 36V。'
+      '6.2.5 电缆直接埋地敷设的深度不应小于0.7m，且应在电缆周围均匀铺垫不小于50mm厚的细砂',
+      '6.2.7 埋地电缆与其附近外电电缆和管沟的平行间距不应小于2m',
+      '6.3.3 室内明敷设主干线距地面不应小于2.5m',
+      '7.1.4 电动建筑机械和手持电动工具的电缆线路规定',
+      '7.2.6 塔身高于30m的塔式起重机，应在塔顶和臂架端部设红色信号灯',
+      '7.4.5 多台夯土机械并列工作时，间距不应小于5m',
+      '7.5.4 电焊机械的二次线应采用防水橡皮护套铜芯软电缆，电缆长度不应大于30m，不得采用金属构件或主体结构钢筋代替二次线的中性导体',
+      '7.6.5 手持电动工具绝缘电阻限制',
+      '8.1.2 在施工程（含脚手架）的周边与架空线路的边线之间的最小安全操作距离',
+      '9.2.2 灯具离地面高度小于2.5m场所的照明，电源电压不应大于AC36V'
     ]
   },
   {
     id: 2,
-    cat: '施工验收',
+    cat: '安全管理',
     code: 'GB50194-2014',
     name: '建设工程施工现场供用电安全规范',
     status: '现行有效',
-    scene: '适用于一般工业与民用建筑施工现场电压在 10kV 及以下的供用电设施的设计、施工、运行、维护及拆除；不适用于水下、井下和矿井等工程。',
+    version: '2014年版',
+    impl: '2015-01-01',
+    replace: '替代 GB50194-93',
+    url: 'https://www.mohurd.gov.cn/',
     points: [
-      '4.0.4、8.1.10、8.1.12、10.2.4、10.2.7、11.2.3、11.4.2 为强制性条文，必须严格执行。',
-      '8.1.1 低压接地型式可采用 TN-S、TN-C-S、TT 三种系统。',
-      '8.1.2 TN-S 系统的 PE 线应做重复接地。',
-      '6.1.1 宜采用总配电箱—分配电箱—末级配电箱三级配电。',
-      '6.3.17 送电顺序：总配电箱 → 分配电箱 → 末级配电箱；停电反向操作。',
-      '6.4.7 末级配电箱剩余电流保护器额定动作电流 ≤30mA、动作时间 ≤0.1s。',
-      '6.4.8 剩余电流保护器应每月至少检测一次。',
-      '4.0.4 发电机组电源必须与外电源闭锁，严禁并列运行。',
-      '7.5 外电线路防护：无法满足安全距离时应采取隔离、停电或迁改措施。',
-      '10.2.4 严禁 220V 灯具充当行灯。',
-      '10.2.5 潮湿等特殊场所应采用 SELV 安全特低电压。',
-      '10.2.7 行灯变压器不得带入金属容器内。',
-      '11.2.3 易燃易爆区域检修严禁带电作业。',
-      '11.4.2 潮湿环境严禁带电检修。',
-      '8.1.10 PE 导体严禁装设开关、熔断器。',
-      '8.1.12 严禁可燃介质金属管道用作 PE 保护导体。',
-      '12.0.3 明确供用电设施巡视、接地与保护器检测周期。',
-      '13 章 设施拆除应执行专项方案，先断电隔离，落实安全技术措施。'
+      '4.0.4、8.1.10、8.1.12、10.2.4、10.2.7、11.2.3、11.4.2 为强制性条文，必须严格执行',
+      '8.1.1 规定低压接地型式可采用 TN-S、TN-C-S、TT 三种系统',
+      '8.1.2 要求 TN-S 系统 PE 线做重复接地',
+      '6.1.1 宜采用总配电箱-分配电箱-末级配电箱三级配电',
+      '6.3.17 明确送电顺序：总配电箱→分配电箱→末级配电箱，停电反向操作',
+      '6.4.7 末级配电箱剩余电流保护器动作电流≤30mA、动作时间≤0.1s',
+      '6.4.8 要求每月至少检测一次剩余电流保护器',
+      '4.0.4 发电机组电源必须与外电源闭锁，严禁并列运行',
+      '7.5 章节对外电线路防护作出规定，无法满足安全距离应采取隔离、停电或迁改措施',
+      '10.2.4 严禁 220V 灯具充当行灯',
+      '10.2.7 行灯变压器不得带入金属容器内',
+      '10.2.5 潮湿等特殊场所采用 SELV 安全特低电压',
+      '11.2.3 易燃易爆区域检修严禁带电作业',
+      '11.4.2 潮湿环境严禁带电检修',
+      '8.1.10 PE 导体严禁装设开关、熔断器',
+      '8.1.12 严禁可燃介质金属管道用作 PE 保护导体',
+      '12.0.3 明确供用电设施巡视、接地与保护器检测周期',
+      '13 章要求设施拆除执行专项方案，先断电隔离，落实安全技术措施'
     ]
   }
 ];
 
-var CATS = ['全部', '民用建筑', '结构', '防火', '施工验收'];
-var currentCat = '全部';
-var openIds = {};
+const CATEGORIES = ['全部', '民用建筑', '结构', '防火', '施工验收', '安全管理'];
+let currentCategory = '全部';
+let searchQuery = '';
 
-var listEl = document.getElementById('list');
-var qEl = document.getElementById('q');
-var catsEl = document.getElementById('cats');
+// DOM 元素
+const categoryContainer = document.getElementById('category-container');
+const listContainer = document.getElementById('list-container');
+const listCount = document.getElementById('list-count');
+const searchInput = document.getElementById('search-input');
+const homeView = document.getElementById('home-view');
+const detailView = document.getElementById('detail-view');
+const detailContent = document.getElementById('detail-content');
+const backBtn = document.getElementById('back-btn');
 
-function esc(s) {
-  return String(s).replace(/[&<>"]/g, function (m) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m];
-  });
+// 工具函数
+function esc(str) {
+  return String(str).replace(/[&<>"']/g, match => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[match]));
 }
 
-function statusClass(s) {
-  if (s.indexOf('废止') > -1) return 'red';
-  if (s.indexOf('修订') > -1) return 'orange';
+function getStatusClass(status) {
+  if (status.includes('废止')) return 'red';
+  if (status.includes('修订')) return 'orange';
   return 'green';
 }
 
-function buildChips() {
-  CATS.forEach(function (c) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'chip' + (c === currentCat ? ' on' : '');
-    b.textContent = c;
-    b.setAttribute('data-cat', c);
-    catsEl.appendChild(b);
-  });
-}
-
-function detailHTML(d) {
-  return '<div class="detail">' +
-      '<h3>适用场景</h3>' +
-      '<p>' + esc(d.scene) + '</p>' +
-      '<h3>核心条文摘要</h3>' +
-      '<ul>' + d.points.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>' +
-    '</div>';
-}
-
-function render() {
-  var q = qEl.value.trim().toLowerCase();
-  var items = DATA.filter(function (d) {
-    if (currentCat !== '全部' && d.cat !== currentCat) return false;
-    if (!q) return true;
-    return d.name.toLowerCase().indexOf(q) > -1 || d.code.toLowerCase().indexOf(q) > -1;
-  });
-
-  if (!items.length) {
-    listEl.innerHTML = '<div class="empty">未找到相关规范</div>';
-    return;
-  }
-
-  listEl.innerHTML = items.map(function (d) {
-    var open = !!openIds[d.id];
-    return '<article class="item">' +
-        '<div class="head">' +
-          '<span class="code">' + esc(d.code) + '</span>' +
-          '<span class="tag ' + statusClass(d.status) + '">' + esc(d.status) + '</span>' +
-        '</div>' +
-        '<h2 class="name">' + esc(d.name) + '</h2>' +
-        '<button type="button" class="btn" data-toggle="' + d.id + '">' + (open ? '收起' : '查看原文') + '</button>' +
-        (open ? detailHTML(d) : '') +
-      '</article>';
+// 渲染分类
+function renderCategories() {
+  categoryContainer.innerHTML = CATEGORIES.map(cat => {
+    const count = DATA.filter(d => cat === '全部' || d.cat === cat).length;
+    const isActive = currentCategory === cat ? 'active' : '';
+    return `<button class="category-btn ${isActive}" data-cat="${esc(cat)}">${esc(cat)}(${count})</button>`;
   }).join('');
 }
 
-catsEl.addEventListener('click', function (e) {
-  var b = e.target.closest('.chip');
-  if (!b) return;
-  currentCat = b.getAttribute('data-cat');
-  Array.prototype.forEach.call(catsEl.children, function (x) {
-    x.classList.toggle('on', x === b);
+// 渲染列表
+function renderList() {
+  const filteredData = DATA.filter(item => {
+    const matchCat = currentCategory === '全部' || item.cat === currentCategory;
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q || item.name.toLowerCase().includes(q) || item.code.toLowerCase().includes(q);
+    return matchCat && matchSearch;
   });
-  render();
+
+  listCount.textContent = `共 ${filteredData.length} 条规范`;
+
+  if (filteredData.length === 0) {
+    listContainer.innerHTML = '<div class="empty-state">未找到匹配的规范</div>';
+    return;
+  }
+
+  listContainer.innerHTML = filteredData.map(item => `
+    <div class="card" data-id="${item.id}">
+      <div class="card-top">
+        <span class="card-code">${esc(item.code)}</span>
+        <span class="card-status ${getStatusClass(item.status)}">${esc(item.status)}</span>
+      </div>
+      <h2 class="card-title">${esc(item.name)}</h2>
+      <div class="card-meta">${esc(item.cat)} · ${esc(item.version)} · 实施 ${esc(item.impl)}</div>
+    </div>
+  `).join('');
+}
+
+// 详情渲染
+function showDetail(id) {
+  const item = DATA.find(d => d.id === id);
+  if (!item) return;
+
+  // 将条文数组拼接，并用正则匹配 6.2.5 这种编号并高亮
+  let summaryText = item.points.join('；');
+  summaryText = esc(summaryText).replace(/(\d+\.\d+\.\d+)/g, '<span class="highlight">$1</span>');
+  // 处理可能出现的连续标点
+  summaryText = summaryText.replace(/；/g, '；').replace(/。；/g, '；');
+
+  detailContent.innerHTML = `
+    <h1 class="detail-title">${esc(item.name)}</h1>
+    <div class="detail-subtitle">${esc(item.code)} · ${esc(item.version)}</div>
+    
+    <div class="summary-section">
+      <div class="summary-title">核心条文摘要</div>
+      <div class="summary-text">${summaryText}</div>
+    </div>
+    
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">分类</div>
+        <div class="info-value">${esc(item.cat)}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">实施时间</div>
+        <div class="info-value">${esc(item.impl)}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">替代关系</div>
+        <div class="info-value">${esc(item.replace || '—')}</div>
+      </div>
+    </div>
+    
+    <div class="link-box">
+      <div class="link-title">原文查看链接（可复制后在浏览器中手动粘贴打开）</div>
+      <a href="${esc(item.url)}" target="_blank" class="link-url">${esc(item.url)}</a>
+      <button class="copy-btn" data-url="${esc(item.url)}">复制链接</button>
+    </div>
+  `;
+
+  homeView.classList.add('hidden');
+  detailView.classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+// 返回列表
+function goBack() {
+  detailView.classList.add('hidden');
+  homeView.classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+// 事件绑定
+categoryContainer.addEventListener('click', e => {
+  const btn = e.target.closest('.category-btn');
+  if (!btn) return;
+  currentCategory = btn.dataset.cat;
+  renderCategories();
+  renderList();
 });
 
-listEl.addEventListener('click', function (e) {
-  var b = e.target.closest('[data-toggle]');
-  if (!b) return;
-  var id = b.getAttribute('data-toggle');
-  if (openIds[id]) { delete openIds[id]; } else { openIds[id] = true; }
-  render();
+searchInput.addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderList();
 });
 
-qEl.addEventListener('input', render);
+listContainer.addEventListener('click', e => {
+  const card = e.target.closest('.card');
+  if (card) {
+    showDetail(Number(card.dataset.id));
+  }
+});
 
-buildChips();
-render();
+backBtn.addEventListener('click', goBack);
+
+// 复制链接功能（带降级处理）
+detailContent.addEventListener('click', e => {
+  const btn = e.target.closest('.copy-btn');
+  if (!btn) return;
+  
+  const url = btn.dataset.url;
+  const originalText = btn.textContent;
+
+  const handleSuccess = () => {
+    btn.textContent = '已复制';
+    btn.style.color = '#1a7f37';
+    btn.style.borderColor = '#1a7f37';
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1500);
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url).then(handleSuccess).catch(() => {
+      fallbackCopy(url, handleSuccess);
+    });
+  } else {
+    fallbackCopy(url, handleSuccess);
+  }
+});
+
+function fallbackCopy(text, callback) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    callback();
+  } catch (err) {
+    alert('复制失败，请手动选择复制');
+  }
+  document.body.removeChild(textarea);
+}
+
+// 初始化
+renderCategories();
+renderList();
 </script>
 </body>
 </html>
