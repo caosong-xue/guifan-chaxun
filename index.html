@@ -1148,7 +1148,7 @@
             window.__isLoggedIn = isLoggedIn;
 
             // 移除 loading 状态，显示对应骨架屏
-            skeleton.classList.remove('loading');            骨架.classList.remove('加载中');
+            skeleton.classList.remove('loading');
 
             if (!isLoggedIn) {
               // 未登录：显示 welcome-only 视图
@@ -1159,10 +1159,10 @@
           .catch(function (error) {
             console.warn('[Skeleton] Failed to check login status:', error);
             // 请求失败时，移除 loading 状态
-            skeleton.classList.remove('loading');            骨架.classList.remove('加载中');
-            window.__isLoggedIn = false;            窗口.__是否已登录 = 假;
+            skeleton.classList.remove('loading');
+            window.__isLoggedIn = false;
             // 出错也显示未登录视图，因为很可能是未登录导致的
-            skeleton.classList.add添加('not-logged-in''未登录');
+            skeleton.classList.add('not-logged-in');
           });
       }
     })();
@@ -1172,31 +1172,31 @@
   <!-- 骨架屏淡出脚本 -->
   <script>
     // 平滑隐藏骨架屏（当整个应用渲染完成时触发）
-    const hideSkeleton = (delay延迟延迟延迟延迟延迟延迟延迟延迟延迟延迟 = 0) => {
+    const hideSkeleton = (delay = 0) => {
       const skeleton = document.getElementById('app-skeleton');
 
-      if (skeleton && !skeleton.classList.contains('hidden')) {      如果 (骨架 && !骨架.classList.包含('hidden')) {      如果 (骨架 && !骨架.classList.contains('hidden')) {      如果 (骨架 && !骨架.classList.包含('hidden')) {
+      if (skeleton && !skeleton.classList.contains('hidden')) {
         const doHide = () => {
           // 添加 hidden 类触发淡出动画
           skeleton.classList.add('hidden');
 
           // 动画结束后移除 DOM
-          skeleton.addEventListener('animationend', () => {          骨架.addEventListener('animationend', () => {
-            skeleton.remove移除();
+          skeleton.addEventListener('animationend', () => {
+            skeleton.remove();
           }, { once: true });
 
           // 备用：如果 animationend 没触发，400ms 后强制移除
           setTimeout(() => {
-            if (skeleton.parentNode) {            如果 (骨架.父节点) {            如果 (skeleton.parentNode) {            如果 (骨架.父节点) {            如果 (skeleton.parentNode) {            如果 (骨架.父节点) {            如果 (skeleton.parentNode) {            如果 (骨架.父节点) {            如果 (skeleton.parentNode) {            如果 (骨架.父节点) {            如果 (skeleton.parentNode) {            如果 (骨架.父节点) {            如果 (skeleton.parentNode) {            如果 (骨架.父节点) {            如果 (skeleton.parentNode) {            如果 (骨架.父节点) {
-              skeleton.remove移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();              骨架.移除();
+            if (skeleton.parentNode) {
+              skeleton.remove();
             }
           }, 400);
         };
 
-        if (delay延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟延迟延迟延迟延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟延迟延迟延迟延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟延迟延迟延迟延迟延迟延迟延迟延迟延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟延迟延迟延迟延迟延迟延迟延迟延迟延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟延迟延迟延迟延迟延迟延迟延迟延迟延迟 > 0) {        如果 (延迟 > 0) {        如果 (delay延迟 > 0){如果延迟delay延迟延迟delay延迟延迟延迟延迟延迟延迟延迟延迟延迟延迟
+        if (delay > 0) {
           // 使用 requestAnimationFrame 确保在下一帧执行，让真实UI先渲染
           requestAnimationFrame(() => {
-            setTimeout(doHide, delay延迟);
+            setTimeout(doHide, delay);
           });
         } else {
           // 即使无延迟，也使用 requestAnimationFrame 确保真实UI已渲染
@@ -1208,13 +1208,13 @@
     };
 
     // 监听应用就绪事件 - 添加短暂延迟确保侧边栏完全渲染
-    window窗口.addEventListener('app-ready', () => hideSkeleton(50));
+    window.addEventListener('app-ready', () => hideSkeleton(50));
 
     // 备用 - 如果 10 秒后还没触发，自动隐藏
     setTimeout(() => {
       const skeleton = document.getElementById('app-skeleton');
-      if (skeleton && !skeleton.classList.contains('hidden')) {      如果 (骨架 && !骨架.classList.包含('hidden')) {
-        hideSkeleton(0);        隐藏骨架(0);
+      if (skeleton && !skeleton.classList.contains('hidden')) {
+        hideSkeleton(0);
       }
     }, 1000 * 20);
   </script>
