@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>建筑规范查询</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card-bg: #ffffff;
+    --text-main: #111827;
+    --text-sub: #6b7280;
+    --blue: #1e4bd2;
+    --blue-hover: #1a3fa8;
+    --border: #e5e7eb;
+  }
+  
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+  }
+
+  /* 搜索框 */
+  .search-box {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding: 8px 0 16px;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    outline: none;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--text-main);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(30, 75, 210, 0.1);
+  }
+
+  .search-input::placeholder {
+    color: #9ca3af;
+  }
+
+  .list-header {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+
+  /* 规范卡片 */
+  .card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .card-title {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 0 0 10px;
+    color: #1f2328;
+  }
+
+  .card-code {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    background: #eff4ff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--text-sub);
+    margin-bottom: 16px;
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .meta-label {
+    width: 70px;
+    flex-shrink: 0;
+    color: #9ca3af;
+  }
+
+  .meta-value {
+    color: #374151;
+  }
+
+  /* 按钮组 */
+  .card-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: var(--blue-hover);
+  }
+
+  .btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid transparent;
+  }
+
+  .btn-secondary:hover {
+    background: #e5e7eb;
+    border-color: #d1d5db;
+  }
+
+  /* 空状态 */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-sub);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="search-box">
+    <input type="text" id="search" class="search-input" placeholder="输入规范名称或编号搜索" autocomplete="off">
+  </div>
+  
+  <div class="list-header" id="count">共 0 条规范</div>
+  <div id="list"></div>
+</div>
+
+<script>
+/**
+ * 规范数据数组
+ * 
+ * 字段说明：
+ * - name: 规范名称 (必填)
+ * - code: 规范编号 (必填)
+ * - implDate: 实施时间 (选填，可留空)
+ * - replace: 替代关系 (选填，可留空)
+ * - officialUrl: 官网链接 (选填，填了才显示按钮)
+ * - pdfFile: PDF文件名 (选填，填了才显示按钮。如 "JGJ_T46-2024.pdf"，需与 index.html 放同一目录)
+ */
+const DATA = [
+  {
+    name: "建筑与市政工程施工现场临时用电安全技术标准",
+    code: "JGJ/T46-2024",
+    implDate: "2025-01-01",
+    replace: "替代 JGJ/T46-2005",
+    officialUrl: "https://www.mohurd.gov.cn/",
+    pdfFile: "" // 留空则不显示 PDF 按钮
+  },
+  {
+    name: "建设工程施工现场供用电安全规范",
+    code: "GB50194-2014",
+    implDate: "2015-01-01",
+    replace: "替代 GB50194-93",
+    officialUrl: "https://www.mohurd.gov.cn/",
+    pdfFile: "GB50194-2014.pdf" // 示例文件名
+  }
+  // 在此处继续添加，格式同上。可直接批量粘贴 1000 条数据。
+];
+
+// DOM 元素
+const listEl = document.getElementById('list');
+const countEl = document.getElementById('count');
+const searchEl = document.getElementById('search');
+
+// 转义 HTML
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, function(match) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[match];
+  });
+}
+
+// 渲染卡片
+function renderList(keyword = '') {
+  const q = keyword.trim().toLowerCase();
+  
+  // 过滤数据
+  const filtered = DATA.filter(item => {
+    if (!q) return true;
+    const nameMatch = item.name && item.name.toLowerCase().includes(q);
+    const codeMatch = item.code && item.code.toLowerCase().includes(q);
+    return nameMatch || codeMatch;
+  });
+
+  // 更新数量
+  countEl.textContent = `共 ${filtered.length} 条规范`;
+
+  // 空状态
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty">未找到相关规范</div>';
+    return;
+  }
+
+  // 拼接 HTML
+  const html = filtered.map(item => {
+    // 处理按钮显示逻辑
+    const officialBtn = item.officialUrl 
+      ? `<a href="${escapeHTML(item.officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">官网链接</a>` 
+      : '';
+      
+    const pdfBtn = item.pdfFile 
+      ? `<a href="./${escapeHTML(item.pdfFile)}" target="_blank" class="btn btn-secondary">本地PDF原文</a>` 
+      : '';
+
+    // 处理元数据行
+    const metaRows = [];
+    if (item.implDate) {
+      metaRows.push(`<div class="meta-row"><span class="meta-label">实施时间</span><span class="meta-value">${escapeHTML(item.implDate)}</span></div>`);
+    }
+    if (item.replace) {
+      metaRows.push(`<div class="meta-row"><span class="meta-label">替代关系</span><span class="meta-value">${escapeHTML(item.replace)}</span></div>`);
+    }
+
+    const buttonsHTML = (officialBtn || pdfBtn) 
+      ? `<div class="card-actions">${officialBtn}${pdfBtn}</div>` 
+      : '';
+
+    return `
+      <div class="card">
+        <div class="card-code">${escapeHTML(item.code)}</div>
+        <h2 class="card-title">${escapeHTML(item.name)}</h2>
+        <div class="card-meta">
+          ${metaRows.join('')}
+        </div>
+        ${buttonsHTML}
+      </div>
+    `;
+  }).join('');
+
+  listEl.innerHTML = html;
+}
+
+// 搜索事件 (加入防抖以应对大量数据)
+let timer;
+searchEl.addEventListener('input', function(e) {
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    renderList(e.target.value);
+  }, 200);
+});
+
+// 初始化渲染
+renderList();
+</script>
+</body>
+</html>
