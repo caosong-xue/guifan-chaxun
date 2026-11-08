@@ -90,6 +90,7 @@
     line-height: 1.4;
     margin: 0 0 10px;
     color: #1f2328;
+    word-break: break-all;
   }
 
   .card-code {
@@ -102,12 +103,13 @@
     padding: 3px 8px;
     border-radius: 6px;
     margin-bottom: 12px;
+    word-break: break-all;
   }
 
   .card-meta {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     font-size: 14px;
     color: var(--text-sub);
     margin-bottom: 16px;
@@ -116,6 +118,7 @@
   .meta-row {
     display: flex;
     align-items: flex-start;
+    line-height: 1.6;
   }
 
   .meta-label {
@@ -126,11 +129,14 @@
 
   .meta-value {
     color: #374151;
+    flex: 1;
+    word-break: break-all;
   }
 
   /* 按钮组 */
   .card-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     padding-top: 16px;
     border-top: 1px solid #f3f4f6;
@@ -149,6 +155,7 @@
     cursor: pointer;
     transition: all 0.15s;
     border: none;
+    white-space: nowrap;
   }
 
   .btn-primary {
@@ -198,29 +205,276 @@
  * 字段说明：
  * - name: 规范名称 (必填)
  * - code: 规范编号 (必填)
- * - implDate: 实施时间 (选填，可留空)
- * - replace: 替代关系 (选填，可留空)
+ * - implDate: 实施时间 (选填，没有则不显示该行)
+ * - replace: 替代关系 (选填，没有则不显示该行)
  * - officialUrl: 官网链接 (选填，填了才显示按钮)
- * - pdfFile: PDF文件名 (选填，填了才显示按钮。如 "JGJ_T46-2024.pdf"，需与 index.html 放同一目录)
+ * - pdfUrl: 本地PDF或网盘链接 (选填，填了才显示按钮。如果是文件名如"JGJ.pdf"，会自动加上"./"表示同一文件夹)
  */
 const DATA = [
   {
     name: "建筑与市政工程施工现场临时用电安全技术标准",
-    code: "JGJ/T46-2024",
+    code: "JGJT46-2024",
     implDate: "2025-01-01",
-    replace: "替代 JGJ/T46-2005",
-    officialUrl: "https://www.mohurd.gov.cn/",
-    pdfFile: "" // 留空则不显示 PDF 按钮
+    replace: "替代JGJ/T46-2005",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2024/art_17339_780410.html",
+    pdfUrl: ""
   },
   {
     name: "建设工程施工现场供用电安全规范",
     code: "GB50194-2014",
     implDate: "2015-01-01",
-    replace: "替代 GB50194-93",
-    officialUrl: "https://www.mohurd.gov.cn/",
-    pdfFile: "GB50194-2014.pdf" // 示例文件名
+    replace: "替代GB50194-93",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2015/art_17339_224216.html",
+    pdfUrl: ""
+  },
+  {
+    name: "钢丝绳要求汇总",
+    code: "gangsisheng",
+    implDate: "",
+    replace: "",
+    officialUrl: "https://std.samr.gov.cn/gb/search/gbDetailed?id=FC816D04FFAA62EBE05397BE0A0AD5FA",
+    pdfUrl: ""
+  },
+  {
+    name: "起重机钢丝绳保养维护检验和报废",
+    code: "GBT5972-2023",
+    implDate: "2023-12-01",
+    replace: "替代GB/T 5972-2016",
+    officialUrl: "https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=59EC7999CC01E832EC8568DEB5E4E60D",
+    pdfUrl: ""
+  },
+  {
+    name: "升降工作平台安全规则",
+    code: "GB40160-2021",
+    implDate: "2022-05-01",
+    replace: "",
+    officialUrl: "https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=ABA5B4F837D9E4AD51DBA2D4E4E44A17",
+    pdfUrl: ""
+  },
+  {
+    name: "建筑施工升降设备设施维护保养技术规程",
+    code: "DB37t5356",
+    implDate: "2026-07-01",
+    replace: "",
+    officialUrl: "http://zjt.shandong.gov.cn/art/2026/4/2/art_119935_10353075.html",
+    pdfUrl: ""
+  },
+  {
+    name: "高处作业分级",
+    code: "GB3608-2025",
+    implDate: "2026-05-01",
+    replace: "替代GB/T 3608-2008",
+    officialUrl: "https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=D2C19D86441622FA0450DA7AB59F5929",
+    pdfUrl: ""
+  },
+  {
+    name: "有限空间作业安全技术规范（正式版）",
+    code: "GB46768-2025",
+    implDate: "2026-05-01",
+    replace: "首次制定发布，无替代旧标准",
+    officialUrl: "https://www.tsqs.gov.cn/info/5487/947090.htm",
+    pdfUrl: ""
+  },
+  {
+    name: "房屋市政工程生产安全重大事故隐患判定标准（2024版）",
+    code: "zhongdayinhuanpandingbiaozhun2024",
+    implDate: "2024-12-13",
+    replace: "替代《房屋市政工程生产安全重大事故隐患判定标准（2022版）》（建质规〔2022〕2号），该2022版同时废止",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2024/art_38824e639b5e4efa90b878f3d5c0f846.html",
+    pdfUrl: ""
+  },
+  {
+    name: "房屋市政工程生产安全重大事故隐患判定标准（2024版）宣传海报",
+    code: "zhongdashiguyinhuanhaibao",
+    implDate: "",
+    replace: "",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2024/art_38824e639b5e4efa90b878f3d5c0f846.html",
+    pdfUrl: "https://www.alipan.com/s/8p5s7MT1T4G"
+  },
+  {
+    name: "砌体结构工程施工质量验收规范",
+    code: "GB50203-2011",
+    implDate: "2012-05-01",
+    replace: "替代《砌体工程施工质量验收规范》GB 50203-2002（同时废止）；其原强制性条文已被GB 55007-2021《砌体结构通用规范》废止，不一致处以GB 55007-2021为准",
+    officialUrl: "https://jncc.jinan.gov.cn/cms_files/jcms1/web19/site/attach/0/86c3edc22a0045f89f6b929ffc81bb94.pdf",
+    pdfUrl: ""
+  },
+  {
+    name: "建筑节能工程施工质量验收标准",
+    code: "GB50411-2019",
+    implDate: "2019-12-01",
+    replace: "替代原《建筑节能工程施工质量验收规范》GB 50411-2007（同时废止）",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2019/art_17339_242810.html",
+    pdfUrl: ""
+  },
+  {
+    name: "建筑地基基础工程施工质量验收标准",
+    code: "GB50202-2018",
+    implDate: "2018-10-01",
+    replace: "替代《建筑地基基础工程施工质量验收规范》GB 50202-2002（同时废止）",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2019/art_17339_239995.html",
+    pdfUrl: ""
+  },
+  {
+    name: "蒸压加气混凝土砌块、板材构造",
+    code: "13J104",
+    implDate: "2014-01-01",
+    replace: "替代03J104",
+    officialUrl: "https://ebook.chinabuilding.com.cn/zbooklib/book/detail/show?bookID=60308&SiteID=1",
+    pdfUrl: ""
+  },
+  {
+    name: "砌体填充墙结构构造",
+    code: "22G614-1",
+    implDate: "2022-12-21",
+    replace: "替代12G614-1",
+    officialUrl: "https://www.chinabuilding.com.cn/book-2590.html",
+    pdfUrl: ""
+  },
+  {
+    name: "建筑防水（设计）",
+    code: "25J950",
+    implDate: "2025-12-01",
+    replace: "",
+    officialUrl: "https://www.chinabuilding.com.cn/book-2739.html",
+    pdfUrl: "https://www.alipan.com/s/sZnx9RuaAvJ"
+  },
+  {
+    name: "建筑施工安全生产隐患识别图集（高处作业吊篮）",
+    code: "anquanshengchanyinhuanshibietuji",
+    implDate: "2023-12-25",
+    replace: "",
+    officialUrl: "http://zjt.shandong.gov.cn/art/2023/12/25/art_102884_10337381.html",
+    pdfUrl: ""
+  },
+  {
+    name: "内隔墙—轻质条板",
+    code: "24J113-1",
+    implDate: "",
+    replace: "替代10J113-1《内隔墙—轻质条板》",
+    officialUrl: "https://www.chinabuilding.com.cn/book-2662.html",
+    pdfUrl: "https://www.alipan.com/s/gtPGCQcLXW8"
+  },
+  {
+    name: "建筑轻质条板隔墙技术规程",
+    code: "JGJT157-2014",
+    implDate: "2014.12.1",
+    replace: "替代JGJ/T 157-2008《建筑轻质条板隔墙技术规程》（该版同时废止）",
+    officialUrl: "https://www.chinabuilding.com.cn/article-3974.html",
+    pdfUrl: ""
+  },
+  {
+    name: "岩棉薄抹灰外墙外保温工程技术标准",
+    code: "JGJT480-2019",
+    implDate: "2019-11-01",
+    replace: "",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2019/art_17339_242793.html",
+    pdfUrl: ""
+  },
+  {
+    name: "保温装饰板外墙外保温系统应用技术规程",
+    code: "DB37T5229-2022",
+    implDate: "2022-12-01",
+    replace: "全部代替DBJ/T 14-072-2010《保温装饰板外墙外保温系统应用技术规程》",
+    officialUrl: "https://std.samr.gov.cn/db/search/stdDBDetailedCNF?id=0EA7E13A410F6A7AE06397BE0A0ADD85",
+    pdfUrl: ""
+  },
+  {
+    name: "岩棉复合板外墙外保温系统应用技术规程",
+    code: "DB37T 5230-2022",
+    implDate: "2022-12-01",
+    replace: "全部代替DBJ/T 14-073-2010《岩棉板外墙外保温系统应用技术规程》、DB37/T 1887-2011",
+    officialUrl: "https://std.samr.gov.cn/db/search/stdDBDetailedCNF?id=0EA7E13A41106A7AE06397BE0A0ADD85",
+    pdfUrl: ""
+  },
+  {
+    name: "关于加强建筑外墙保温工程施工质量管理的若干规定（失效）",
+    code: "2018-2",
+    implDate: "2018-08-01",
+    replace: "",
+    officialUrl: "https://jncc.jinan.gov.cn/col40636/art/2018/art_40636_3529138.html",
+    pdfUrl: ""
+  },
+  {
+    name: "岩棉板外墙外保温系统应用技术规程",
+    code: "DBJT14-073-2010",
+    implDate: "2011-02-01",
+    replace: "被DB37/T 5230-2022《岩棉复合板外墙外保温系统应用技术规程》全部代替（2022-12-01起实施）",
+    officialUrl: "http://zjt.shandong.gov.cn/art/2022/11/7/art_119935_10316341.html",
+    pdfUrl: ""
+  },
+  {
+    name: "岩棉板外墙外保温系统",
+    code: "DB37T1887-2011",
+    implDate: "2011-06-01",
+    replace: "被DB37/T 5230-2022《岩棉复合板外墙外保温系统应用技术规程》全部代替，自2022-12-01起同时废止（鲁建标字〔2022〕13号），DBJ/T 14-073-2010同步废止",
+    officialUrl: "http://zjt.shandong.gov.cn/art/2022/11/7/art_119935_10316341.html",
+    pdfUrl: ""
+  },
+  {
+    name: "钢结构焊接规范",
+    code: "GB50661-2011",
+    implDate: "2012-08-01",
+    replace: "原强制性条文第4.0.1、5.7.1、6.1.1、8.1.8条（款）自2022-01-01起随GB55006-2021《钢结构通用规范》实施而废止，标准其余内容现行有效",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2012/art_17339_208377.html",
+    pdfUrl: ""
+  },
+  {
+    name: "钢结构通用规范",
+    code: "GB55006-2021",
+    implDate: "2022-01-01",
+    replace: "全文强制性工程建设规范；公告发布之日（2021-04-09）起废止现行工程建设标准相关强制性条文（含GB50661-2011等标准强条）；不一致规定以本规范为准",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2021/art_17339_761191.html",
+    pdfUrl: ""
+  },
+  {
+    name: "装配式钢结构建筑技术规程",
+    code: "DB37T5115-2018",
+    implDate: "2018-07-01",
+    replace: "无整体替代关系；2023年度山东省工程建设标准复审结论为继续有效",
+    officialUrl: "http://zjt.shandong.gov.cn/art/2018/4/9/art_119935_8769904.html",
+    pdfUrl: ""
+  },
+  {
+    name: "钢结构工程施工质量验收标准",
+    code: "GB50205-2020",
+    implDate: "2020-08-01",
+    replace: "替代GB50205-2001《钢结构工程施工质量验收规范》，2001版自2020-08-01起同时废止",
+    officialUrl: "https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2020/art_17339_246887.html",
+    pdfUrl: ""
+  },
+  {
+    name: "预应力混凝土空心方桩",
+    code: "L20G405",
+    implDate: "2020-04-01",
+    replace: "2023年12月8日复审确认修编，现列山东省现行工程建设标准设计图集目录（2026年10月19日更新）",
+    officialUrl: "http://zjt.shandong.gov.cn/art/2020/12/15/art_121886_10145743.html",
+    pdfUrl: ""
+  },
+  {
+    name: "地下工程防水技术规范",
+    code: "GB50108-2008",
+    implDate: "2009-04-01",
+    replace: "替代GB50108-2001；第3.1.4、3.2.1、3.2.2、4.1.22、4.1.26(1、2)、5.1.3条（款）自2023-04-01起被GB55030-2022《建筑与市政工程防水通用规范》废止",
+    officialUrl: "https://www.spc.org.cn/online/5980ce7c0f2b9e4d8a5c18a97e1399df.html",
+    pdfUrl: ""
+  },
+  {
+    name: "山东省《公共建筑节能设计标准》",
+    code: "DB37T 5155-2025",
+    implDate: "2025-08-01",
+    replace: "替代原《公共建筑节能设计标准》DB37/ 5155-2019，该2019版自2025-02-05起同时废止",
+    officialUrl: "http://zjt.shandong.gov.cn/art/2025/2/5/art_119935_10348924.html",
+    pdfUrl: "https://www.alipan.com/s/SjToBpGqgHm"
+  },
+  {
+    name: "建筑防火通用规范",
+    code: "GB55037-2022",
+    implDate: "2023-06-01",
+    replace: "全文强制性工程建设规范；同时废止GB50016-2014（2018年版）、GB50039-2010、GB50067-2014、GB50098-2009、GB50160-2008（2018年版）、GB50183-2004等6部标准的相关强制性条文",
+    officialUrl: "https://www.gov.cn/zhengce/zhengceku/2023-01/30/content_5739161.htm",
+    pdfUrl: "https://www.alipan.com/s/vXGX17NbKNo"
   }
-  // 在此处继续添加，格式同上。可直接批量粘贴 1000 条数据。
 ];
 
 // DOM 元素
@@ -242,7 +496,7 @@ function escapeHTML(str) {
   });
 }
 
-// 渲染卡片
+// 渲染列表
 function renderList(keyword = '') {
   const q = keyword.trim().toLowerCase();
   
@@ -270,8 +524,16 @@ function renderList(keyword = '') {
       ? `<a href="${escapeHTML(item.officialUrl)}" target="_blank" rel="noopener" class="btn btn-primary">官网链接</a>` 
       : '';
       
-    const pdfBtn = item.pdfFile 
-      ? `<a href="./${escapeHTML(item.pdfFile)}" target="_blank" class="btn btn-secondary">本地PDF原文</a>` 
+    // 自动判断是相对路径还是完整外链
+    let pdfHref = "";
+    if (item.pdfUrl) {
+      pdfHref = item.pdfUrl.startsWith('http://') || item.pdfUrl.startsWith('https://') 
+        ? item.pdfUrl 
+        : './' + item.pdfUrl;
+    }
+    
+    const pdfBtn = item.pdfUrl 
+      ? `<a href="${escapeHTML(pdfHref)}" target="_blank" rel="noopener" class="btn btn-secondary">本地PDF原文</a>` 
       : '';
 
     // 处理元数据行
@@ -302,7 +564,7 @@ function renderList(keyword = '') {
   listEl.innerHTML = html;
 }
 
-// 搜索事件 (加入防抖以应对大量数据)
+// 搜索防抖处理
 let timer;
 searchEl.addEventListener('input', function(e) {
   clearTimeout(timer);
@@ -311,7 +573,7 @@ searchEl.addEventListener('input', function(e) {
   }, 200);
 });
 
-// 初始化渲染
+// 初始化
 renderList();
 </script>
 </body>
